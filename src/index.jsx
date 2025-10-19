@@ -1,3 +1,4 @@
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./css/styles.css";
@@ -8,37 +9,32 @@ import margaritaImg from "./img/Margarita.jpg";
 import ginTonicImg from "./img/Gin_Tonic.jpg";
 import mojitoImg from "./img/mojito.jpg";
 
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Cursos from "./Cursos";
+import Contacto from "./Contacto"; 
+
+
+/* --- cocteles --- */
 const cocktails = [
   {
     image: daiquiriImg,
     title: "Daiquiri",
     country: "Cuba",
-    ingredients: [
-      "60 ml ron blanco",
-      "30 ml jugo de lima",
-      "15 ml jarabe de azúcar",
-    ],
+    ingredients: ["60 ml ron blanco", "30 ml jugo de lima", "15 ml jarabe de azúcar"],
     preparation: "Agitar con hielo y colar en copa.",
   },
   {
     image: margaritaImg,
     title: "Margarita",
     country: "México",
-    ingredients: [
-      "50 ml tequila",
-      "25 ml triple sec",
-      "25 ml jugo de lima",
-    ],
+    ingredients: ["50 ml tequila", "25 ml triple sec", "25 ml jugo de lima"],
     preparation: "Agitar con hielo, servir en copa escarchada con sal.",
   },
   {
     image: ginTonicImg,
     title: "Gin Tonic",
     country: "Inglaterra",
-    ingredients: [
-      "50 ml ginebra",
-      "150 ml tónica",
-    ],
+    ingredients: ["50 ml ginebra", "150 ml tónica"],
     preparation: "Servir en vaso con hielo y limón o pepino.",
   },
   {
@@ -57,6 +53,7 @@ const cocktails = [
   },
 ];
 
+/* --- tarjeta --- */
 function CocktailCard({ image, title, country, ingredients, preparation }) {
   return (
     <div className="card card-popular">
@@ -76,63 +73,71 @@ function CocktailCard({ image, title, country, ingredients, preparation }) {
   );
 }
 
+/* --- App --- */
 function App() {
   return (
-    <>
+    <Router>
       <header>
         <h1>uCocteleria 🍸</h1>
         <p>¡Tu guía de coctelería para todos los niveles!</p>
         <nav className="navbar">
-          <a href="/">Inicio</a>
-          <a href="/cursos">Cursos</a>
-          <a href="/recetas">Recetas</a>
-          <a href="/contacto">Contacto</a>
+          <Link to="/">Inicio</Link>
+          <Link to="/cursos">Cursos</Link>
+          <Link to="/recetas">Recetas</Link>
+          <Link to="/contacto">Contacto</Link>
         </nav>
       </header>
 
-      <main>
-        <section className="bienvenida">
-          <h2>Bienvenido</h2>
-          <p>Explora el fascinante mundo de los cócteles.</p>
-        </section>
+      <Routes>
+        {/* Página principal */}
+        <Route
+          path="/"
+          element={
+            <main>
+              <section className="bienvenida">
+                <h2>Bienvenido</h2>
+                <p>Explora el fascinante mundo de los cócteles.</p>
+              </section>
 
-        <section className="main-content">
-          <div className="card card-dia">
-            <img
-              src={terremotoImg}
-              alt="Terremoto"
-              className="imagen-principal"
-            />
-            <div>
-              <h2>Cóctel de Día: Terremoto (Chile)</h2>
-              <p>
-                El Terremoto es un cóctel tradicional chileno, muy popular en
-                Fiestas Patrias, que se prepara con tres ingredientes
-                principales: vino pipeño, helado de piña y granadina. Se mezcla
-                el pipeño (un vino blanco joven y afrutado) con una o varias
-                cucharadas de helado de piña y luego se agrega un toque de
-                granadina (un jarabe dulce de color rojo). Su nombre se
-                relaciona con el terremoto de 1985, y se dice que su sabor
-                potente y refrescante provoca un efecto similar a un temblor.
-              </p>
-            </div>
-          </div>
+              <section className="main-content">
+                <div className="card card-dia">
+                  <img src={terremotoImg} alt="Terremoto" className="imagen-principal" />
+                  <div>
+                    <h2>Cóctel de Día: Terremoto (Chile)</h2>
+                    <p>
+                      El Terremoto es un cóctel tradicional chileno, muy popular en Fiestas Patrias,
+                      que se prepara con tres ingredientes principales: vino pipeño, helado de piña
+                      y granadina. Su nombre se relaciona con el terremoto de 1985, y se dice que su
+                      sabor potente y refrescante provoca un efecto similar a un temblor.
+                    </p>
+                  </div>
+                </div>
 
-          <h2 className="populares-titulo">Cócteles populares</h2>
-          <div className="cards-container cards-populares">
-            {cocktails.map((cocktail, idx) => (
-              <CocktailCard key={idx} {...cocktail} />
-            ))}
-          </div>
-        </section>
-      </main>
+                <h2 className="populares-titulo">Cócteles populares</h2>
+                <div className="cards-container cards-populares">
+                  {cocktails.map((cocktail, idx) => (
+                    <CocktailCard key={idx} {...cocktail} />
+                  ))}
+                </div>
+              </section>
+            </main>
+          }
+        />
+
+        {/* Página de cursos */}
+        <Route path="/cursos" element={<Cursos />} />
+
+        {/* Página de contacto */}
+        <Route path="/contacto" element={<Contacto />} />
+      </Routes>
 
       <footer>
         <p>&copy; 2025 uCocteleria - Todos los derechos reservados.</p>
       </footer>
-    </>
+    </Router>
   );
 }
 
+/* --- Render --- */
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
