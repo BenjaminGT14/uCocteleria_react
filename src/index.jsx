@@ -12,6 +12,7 @@ import mojitoImg from "./img/mojito.jpg";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Cursos from "./Cursos";
 import Contacto from "./Contacto"; 
+import Recetas from "./recetas";
 
 
 /* --- cocteles --- */
@@ -129,7 +130,12 @@ function App() {
 
         {/* Página de contacto */}
         <Route path="/contacto" element={<Contacto />} />
+        
+        {/* Página de recetas */}
+        <Route path="/recetas" element={<Recetas />} />
+
       </Routes>
+      
 
       <footer>
         <p>&copy; 2025 uCocteleria - Todos los derechos reservados.</p>
