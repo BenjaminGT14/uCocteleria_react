@@ -6,18 +6,19 @@ module.exports = function (config) {
     basePath: '',
     frameworks: ['jasmine'],
     files: [
-      // patrón para todos los specs (ajusta si usas otra convención)
-        { pattern: 'src/**/*.spec.js', watched: false },
-        { pattern: 'src/**/*.spec.jsx', watched: false },
-        { pattern: 'src/**/*.test.js', watched: false },
-        { pattern: 'src/**/*.test.jsx', watched: false }
+      // Cada extensión por separado
+      'src/**/*.spec.js',
+      'src/**/*.spec.jsx',
+      'src/**/*.test.js',   // <- importante para tu app.test.js
+      'src/**/*.test.jsx'
     ],
     preprocessors: {
-        'src/**/*.spec.js': ['webpack', 'sourcemap'],
-        'src/**/*.spec.jsx': ['webpack', 'sourcemap'],
-        'src/**/*.test.js': ['webpack', 'sourcemap'],
-        'src/**/*.test.jsx': ['webpack', 'sourcemap']
+      'src/**/*.spec.js': ['webpack', 'sourcemap'],
+      'src/**/*.spec.jsx': ['webpack', 'sourcemap'],
+      'src/**/*.test.js': ['webpack', 'sourcemap'],  // <- importante
+      'src/**/*.test.jsx': ['webpack', 'sourcemap']
     },
+
     webpack: {
       mode: 'development',
       module: {
@@ -25,19 +26,21 @@ module.exports = function (config) {
           {
             test: /\.(js|jsx)$/,
             exclude: /node_modules/,
-            use: {
-              loader: 'babel-loader'
-              // .babelrc se usa automáticamente
-            }
+            use: { loader: 'babel-loader' }
           },
           {
             test: /\.css$/,
-            use: ['null-loader'] // evita tratar CSS en tests; instala null-loader si lo usas
+            use: ['null-loader']
+          },
+          {
+            test: /\.(png|jpg|jpeg|gif|svg)$/,
+            type: 'asset/resource'
           }
         ]
       },
       resolve: {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx'],
+        modules: [path.resolve(__dirname, 'src'), 'node_modules']
       },
       devtool: 'inline-source-map'
     },
@@ -48,10 +51,6 @@ module.exports = function (config) {
     },
 
     reporters: ['spec', 'coverage'],
-    specReporter: {
-      suppressPassed: false
-    },
-
     coverageReporter: {
       type: 'html',
       dir: 'coverage/',
@@ -66,7 +65,6 @@ module.exports = function (config) {
     singleRun: false,
     concurrency: Infinity,
 
-    // plugins (karma detecta automáticamente la mayoría; si hay problemas decláralos aquí)
     plugins: [
       'karma-jasmine',
       'karma-chrome-launcher',
