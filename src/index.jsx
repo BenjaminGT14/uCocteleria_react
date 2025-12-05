@@ -3,6 +3,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./css/styles.css";
 
+import { useEffect, useState } from "react";
+import { getDailyPhrase } from "./services/positiveApi";
+
 import terremotoImg from "./img/terremoto.jpg";
 import daiquiriImg from "./img/Daiquiri.jpg";
 import margaritaImg from "./img/Margarita.jpg";
@@ -76,11 +79,29 @@ function CocktailCard({ image, title, country, ingredients, preparation }) {
 
 /* --- App --- */
 function App() {
+  const [dailyPhrase, setDailyPhrase] = useState("");
+
+  useEffect(() => {
+    async function loadPhrase() {
+      try {
+        const data = await getDailyPhrase();
+        setDailyPhrase(data.text || "¡Que tengas un excelente día!");
+      } catch (err) {
+        setDailyPhrase("Sigue adelante, ¡vas muy bien!");
+      }
+    }
+    loadPhrase();
+  }, []);
   return (
     <Router>
       <header>
         <h1>uCocteleria 🍸</h1>
         <p>¡Tu guía de coctelería para todos los niveles!</p>
+        
+        {dailyPhrase && (
+          <p className="frase-api">⭐ Frase motivacional: {dailyPhrase}</p>
+        )}
+
         <nav className="navbar">
           <Link to="/">Inicio</Link>
           <Link to="/cursos">Cursos</Link>
