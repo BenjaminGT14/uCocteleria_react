@@ -3,6 +3,10 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./css/styles.css";
 
+import { useEffect, useState } from "react";
+import { getDailyPhrase } from "./services/positiveApi";
+import { getRandomCocktail } from "./services/thecocktaildbApi";
+
 import terremotoImg from "./img/terremoto.jpg";
 import daiquiriImg from "./img/Daiquiri.jpg";
 import margaritaImg from "./img/Margarita.jpg";
@@ -76,11 +80,58 @@ function CocktailCard({ image, title, country, ingredients, preparation }) {
 
 /* --- App --- */
 function App() {
+  
+  const [dailyPhrase, setDailyPhrase] = useState("");
+
+  useEffect(() => {
+    async function loadPhrase() {
+      try {
+        const data = await getDailyPhrase();
+        setDailyPhrase(data.text || "¡Que tengas un excelente día!");
+      } catch (err) {
+        setDailyPhrase("Sigue adelante, ¡vas muy bien!");
+      }
+    }
+    loadPhrase();
+  }, []);
+  
+  const [dailyCocktail, setDailyCocktail] = useState(null);
+
+  useEffect(() => {
+    async function loadCocktail() {
+      try {
+        const data = await getRandomCocktail();
+        setDailyCocktail(data);
+      } catch (error) {
+        console.error("Error cargando cóctel del día:", error);
+      }
+    }
+    loadCocktail();
+  }, []);
+
+  const ingredients = [];
+
+  if (dailyCocktail) {
+    for (let i = 1; i <= 15; i++) {
+      const ing = dailyCocktail[`strIngredient${i}`];
+      const mea = dailyCocktail[`strMeasure${i}`];
+
+      if (ing) {
+        ingredients.push(`${mea ? mea : ""} ${ing}`);
+      }
+    }
+  }
+  
   return (
     <Router>
       <header>
         <h1>uCocteleria 🍸</h1>
         <p>¡Tu guía de coctelería para todos los niveles!</p>
+        
+        {dailyPhrase && (
+          <p className="frase-api">⭐ Frase motivacional: {dailyPhrase}</p>
+        )}
+
         <nav className="navbar">
           <Link to="/">Inicio</Link>
           <Link to="/cursos">Cursos</Link>
@@ -102,16 +153,35 @@ function App() {
 
               <section className="main-content">
                 <div className="card card-dia">
-                  <img src={terremotoImg} alt="Terremoto" className="imagen-principal" />
-                  <div>
-                    <h2>Cóctel de Día: Terremoto (Chile)</h2>
-                    <p>
-                      El Terremoto es un cóctel tradicional chileno, muy popular en Fiestas Patrias,
-                      que se prepara con tres ingredientes principales: vino pipeño, helado de piña
-                      y granadina. Su nombre se relaciona con el terremoto de 1985, y se dice que su
-                      sabor potente y refrescante provoca un efecto similar a un temblor.
-                    </p>
-                  </div>
+                  {dailyCocktail ? (
+                    <>
+                      <img
+                        src={dailyCocktail.strDrinkThumb}
+                        alt={dailyCocktail.strDrink}
+                        className="imagen-principal"
+                      />
+                      <div>
+                        <h2>Cóctel por descubrir: {dailyCocktail.strDrink}</h2>
+
+                        <p><strong>Categoría:</strong> {dailyCocktail.strCategory}</p>
+                        <p><strong>Tipo:</strong> {dailyCocktail.strAlcoholic}</p>
+
+                        <p>
+                          <strong>Instrucciones:</strong>{" "}
+                          {dailyCocktail.strInstructionsES || dailyCocktail.strInstructions}
+                        </p>
+
+                        <h3>Ingredientes:</h3>
+                        <ul>
+                          {ingredients.map((ing, idx) => (
+                            <li key={idx}>{ing}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </>
+                  ) : (
+                    <p>Cargando cóctel del día...</p>
+                  )}
                 </div>
 
                 <h2 className="populares-titulo">Cócteles populares</h2>
