@@ -381,3 +381,11 @@ footer {
   background: #ffe08244;
   border-radius: 6px;
 }
+.frase-api {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #ffe47a;
+  text-decoration: underline;
+}
+
